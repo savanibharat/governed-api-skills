@@ -1,0 +1,40 @@
+# Schema for a skill registry entry. Points to the authoritative skill; does not duplicate it.
+"$schema": "https://json-schema.org/draft/2020-12/schema"
+title: Skill Registration
+description: Registry metadata for one generated skill.
+type: object
+required: [id, name, version, type, status, source]
+additionalProperties: false
+properties:
+  id: { type: string }
+  name: { type: string }
+  version: { type: string }
+  type: { const: api-skill }
+  status: { enum: [draft, approved, deprecated] }
+  owner:
+    type: object
+    properties:
+      team: { type: string }
+  source:
+    type: object
+    required: [repository, path]
+    properties:
+      repository: { type: string }
+      path: { type: string }
+  evaluations:
+    type: object
+    properties:
+      project_suite: { type: string }
+      federation_suite: { type: string }
+  uber_standard_version:
+    type: string
+    description: The baked uber-standard version (drift-check key).
+  compatibility:
+    type: object
+    properties:
+      agent_skills_standard: { type: boolean }
+  last_evaluated:
+    type: object
+    properties:
+      date: { type: string }
+      result: { enum: [passed, failed, inconclusive, not_run] }

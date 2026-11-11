@@ -1,0 +1,18 @@
+# TEMPLATE - per-skill presentation mapping (conforms to schemas/presentation-mapping.schema.yaml).
+# Consumed by scripts/render_markdown.py. Selects fields and labels only; never code.
+# Only include fields that appear in the documented or example response schema.
+title: "{{Response Title}}"
+sections:
+  - heading: "Summary"
+    kind: fields
+    source: ""            # root; or a dotted path such as "data.meta"
+    fields:
+      - { label: "Status", path: "status" }
+      - { label: "Count", path: "total" }
+  - heading: "Items"
+    kind: table
+    source: "items"       # dotted path to the array to tabulate
+    columns:
+      - { label: "ID", path: "id" }
+      - { label: "Name", path: "name", name: true }   # name-like -> capped at 64 chars
+      - { label: "Created", path: "created_at" }

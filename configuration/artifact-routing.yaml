@@ -1,0 +1,33 @@
+# Routing POLICY (behavioral rules). The type-to-location map lives in
+# repository-topology.yaml:routing. This file governs HOW routing writes behave.
+version: 1
+# The closed set of artifact types the factory produces. check_routing.py requires EVERY one to
+# have a destination in repository-topology.yaml:routing - no artifact may be unrouted.
+artifact_types:
+  - generated_skill
+  - project_evaluation
+  - regression_test
+  - adversarial_eval
+  - federated_eval
+  - mcp_reference
+  - skill_registration
+  - evaluation_report
+  - traceability_report
+  - proposed_shared_standard
+rules:
+  require_source_for_every_placement: true   # routing provenance - no placement with source "none"
+  no_default_destination: true               # an uncovered type is a question, never a guessed default
+  dry_run_plan_before_write: true            # produce templates/routing-plan.md and confirm first
+  inspect_before_write: true            # read existing files first
+  never_overwrite_unrelated: true       # preserve unrelated content
+  never_silently_overwrite_skill: true
+  on_missing_or_ambiguous_destination: ask
+  record_generated_and_modified: true   # keep a manifest of what was written or changed
+approval_gates:
+  federation: required                  # proposals only; a human approves shared changes
+  registry: none
+  project: none
+  mcp: none
+preservation:
+  on_conflict: ask                      # never clobber; surface the conflict
+  manifest_path: "evaluations/artifact-manifest.json"

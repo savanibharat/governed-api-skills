@@ -1,0 +1,141 @@
+# Decision & hardcoding register for governed-api-skills.
+# Every deliberate shortcut, fixed threshold, and temporary limitation is recorded here.
+# When a decision changes, update its entry (set status: superseded; do not erase history).
+version: 1
+project: governed-api-skills
+decisions:
+  - id: DD-001
+    category: architecture
+    component: generated-skill
+    description: >
+      Generated skills use core-only frontmatter (name, description, and optional
+      license/compatibility/metadata). No Claude Code-only fields.
+    reason: >
+      Portability across the open Agent Skills standard. Non-core fields silently
+      break on non-Claude runtimes.
+    impact: The factory itself MAY use Claude Code extensions; generated skills MUST NOT.
+    configurable: false
+    status: active
+    revisit_when: A target runtime is permanently fixed to Claude-only.
+
+  - id: DD-002
+    category: architecture
+    component: uber-standard
+    description: >
+      The uber standard (shared guards) is BAKED into each generated skill at
+      generation time, with a version stamp in metadata.uber_standard_version.
+    reason: >
+      Self-contained, portable, confidentiality-safe skills while preserving
+      fix-once governance via a drift check against the stamp.
+    impact: >
+      Updating the uber standard requires regenerating skills to propagate; a drift
+      check lists stale skills.
+    configurable: false
+    status: active
+    revisit_when: Skills are guaranteed to live beside the federation repo.
+
+  - id: DD-003
+    category: security
+    component: response-presentation
+    description: >
+      JSON to Markdown rendering uses a declarative mapping interpreted by one
+      audited primitive (uber-standard/render_markdown.py). Bespoke per-skill
+      scripts are a gated escape hatch only.
+    reason: Avoid executing freshly generated code by default (security + maintenance surface).
+    impact: >
+      A bespoke script requires written justification, human review, sandboxed
+      execution, registration here, and its own adversarial eval.
+    configurable: false
+    status: active
+    revisit_when: A declarative mapping genuinely cannot express a required layout.
+
+  - id: DD-004
+    category: hardcoded_assumption
+    component: document-ingestion
+    description: Initial input document support is PDF, Markdown, and TXT.
+    reason: Covers initial validation scenarios.
+    impact: DOCX, HTML, and others are not supported yet.
+    configurable: false
+    status: active
+    revisit_when: A real use case requires additional document formats.
+
+  - id: DD-005
+    category: hardcoded_assumption
+    component: scope
+    description: Generated skills operate in English only (v1).
+    reason: Bounds the initial validation and sanitization surface.
+    impact: Non-English inputs/outputs are out of scope for v1.
+    configurable: true
+    status: active
+    revisit_when: A validated need for another language appears.
+
+  - id: DD-006
+    category: evaluation
+    component: evaluation-policy
+    description: Initial functional acceptance threshold is 90 percent on the agreed test set.
+    reason: Establish an initial quality bar.
+    impact: Passing the threshold is NOT proof a skill is secure.
+    configurable: true
+    status: active
+    revisit_when: Baseline results justify a change.
+
+  - id: DD-007
+    category: architecture
+    component: mcp
+    description: >
+      Skills instruct Claude to USE an MCP tool that calls the REST API. The factory
+      never generates or modifies MCP servers.
+    reason: A tool-usage skill is not a server implementation.
+    impact: MCP server artifacts are out of scope; MCP tool contracts are inputs only.
+    configurable: false
+    status: active
+    revisit_when: Scope is explicitly expanded beyond skill engineering.
+
+  - id: DD-008
+    category: naming
+    component: factory
+    description: Factory skill name is "governed-api-skills".
+    reason: Kebab-case, 64 chars max, no reserved words; leads with the governance differentiator.
+    impact: The product may still be called "AI Skill Engineering Factory".
+    configurable: false
+    status: active
+    revisit_when: A rename is explicitly requested.
+
+  - id: DD-009
+    category: architecture
+    component: ingestion
+    description: >
+      Company inputs are multiple typed documents (best-practices, routing-policy,
+      repository-map) plus examples. Each document's role is identified explicitly; roles are
+      never guessed, and conflicts between documents are surfaced.
+    reason: Prevent mis-identifying a document's role and misusing its content.
+    impact: Ingestion records the role assigned to each document as evidence.
+    configurable: false
+    status: active
+    revisit_when: A new company document role appears.
+
+  - id: DD-010
+    category: architecture
+    component: routing
+    description: >
+      Routing is derived from company docs plus examples with routing provenance. Every artifact
+      type must be routed (a closed set); there are no guessed defaults; a dry-run plan and
+      scripts/check_routing.py gate every routing write.
+    reason: Ironclad placement - no artifact lands in the wrong repo.
+    impact: An uncovered artifact type stops for a question; federation writes need approval.
+    configurable: false
+    status: active
+    revisit_when: The artifact type set or repo model changes.
+
+  - id: DD-011
+    category: adoption
+    component: entrypoint
+    description: >
+      Single frictionless entry: one-command setup (start.sh installs only pyyaml + jsonschema
+      and verifies the package) and one ordered runbook (RUN.md) with a VERIFY gate per step.
+      Invocation is natural language; no slash commands required.
+    reason: Minimize adoption friction - point at repositories and run, like a one-line install.
+    impact: The only runtime dependencies are python3 + two packages; everything else is files.
+    configurable: false
+    status: active
+    revisit_when: A packaging/installer mechanism is added.

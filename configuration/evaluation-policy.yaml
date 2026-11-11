@@ -1,0 +1,22 @@
+# Evaluation and release policy.
+version: 1
+thresholds:
+  functional_pass_rate: 0.90            # DD-006 (configurable)
+mandatory_suites:
+  - functional
+  - negative
+  - adversarial
+  - regression
+release_policy:
+  block_on_unresolved_critical_adversarial: true
+  require_conformance_gate_pass: true   # scripts/validate_skill.py must pass
+  require_traceability_complete: true   # every mandatory requirement linked to an eval
+evidence:
+  capture_tool_calls: true
+  capture_side_effects: true
+  refusal_alone_is_not_proof: true
+promotion:
+  security_test_to_federation: proposal_with_approval   # never silent
+reviewer:
+  generator_is_not_reviewer: true
+caveat: "Passing the suite is never described as proof a skill is secure."

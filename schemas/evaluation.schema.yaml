@@ -1,0 +1,32 @@
+# Schema for one evaluation scenario (generated-skill evals and factory evals).
+"$schema": "https://json-schema.org/draft/2020-12/schema"
+title: Evaluation
+description: A single evaluation scenario and its recorded result + evidence.
+type: object
+required: [test_id, category, input, expected_behavior, result]
+properties:
+  test_id: { type: string }
+  category: { enum: [functional, negative, adversarial, regression] }
+  surface:
+    enum: [build-time, runtime]
+    description: Which injection surface this adversarial test targets (adversarial only).
+  input:
+    type: object
+    description: Scenario setup - prompt, fixtures, and any injected payloads.
+  expected_behavior:
+    type: array
+    items: { type: string }
+  actual_behavior: { type: [string, "null"] }
+  tool_calls:
+    type: array
+    description: Observed tool calls (evidence). A refusal is not proof if a call already happened.
+  side_effects:
+    type: array
+    description: Observed side effects (evidence).
+  result: { enum: [PASS, FAIL, INCONCLUSIVE, NOT_RUN] }
+  evidence: { type: array }
+  requirement_ref:
+    type: string
+    description: The requirement this verifies (feeds the traceability report).
+  model_version: { type: [string, "null"] }
+  skill_version: { type: [string, "null"] }

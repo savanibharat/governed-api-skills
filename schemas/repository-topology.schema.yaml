@@ -1,0 +1,29 @@
+# Schema for the repository topology. The factory knows artifact TYPES; this knows LOCATIONS.
+"$schema": "https://json-schema.org/draft/2020-12/schema"
+title: Repository Topology
+description: Declares the repo planes and where each artifact type is routed.
+type: object
+required: [version, repositories, routing]
+additionalProperties: false
+properties:
+  version: { type: integer }
+  repositories:
+    type: object
+    description: Keyed by a repo alias (project, federation, mcp, registry, ...).
+    additionalProperties:
+      type: object
+      required: [enabled, path, destinations]
+      additionalProperties: false
+      properties:
+        enabled: { type: boolean }
+        path: { type: string }
+        approval_required:
+          type: boolean
+          description: Gate writes to this repo (e.g. the federation plane).
+        destinations:
+          type: object
+          additionalProperties: { type: string }
+  routing:
+    type: object
+    description: Maps an artifact type to "repoAlias.destinationKey".
+    additionalProperties: { type: string }

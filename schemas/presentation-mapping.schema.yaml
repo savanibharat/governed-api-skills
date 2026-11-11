@@ -1,0 +1,40 @@
+# Schema for the per-skill presentation mapping consumed by uber-standard/render_markdown.py.
+"$schema": "https://json-schema.org/draft/2020-12/schema"
+title: Presentation Mapping
+description: Declarative JSON to Markdown mapping. Selects fields and labels only; no code.
+type: object
+required: [title, sections]
+additionalProperties: false
+properties:
+  title: { type: string, maxLength: 120 }
+  sections:
+    type: array
+    items:
+      type: object
+      required: [kind]
+      additionalProperties: false
+      properties:
+        heading: { type: string, maxLength: 120 }
+        kind: { enum: [fields, table] }
+        source:
+          type: string
+          description: Dotted JSON path to the node for this section; omit for the root.
+        fields:
+          type: array
+          items: { "$ref": "#/$defs/field" }
+        columns:
+          type: array
+          items: { "$ref": "#/$defs/field" }
+"$defs":
+  field:
+    type: object
+    required: [label, path]
+    additionalProperties: false
+    properties:
+      label: { type: string, maxLength: 64 }
+      path:
+        type: string
+        description: Dotted JSON path relative to the section source (fields) or row (columns).
+      name:
+        type: boolean
+        description: Treat as a name-like field (capped at 64 characters when rendered).

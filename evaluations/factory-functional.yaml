@@ -1,0 +1,56 @@
+# The factory's OWN evals - does the factory itself behave? (schemas/evaluation.schema.yaml)
+suite: factory-functional
+evals:
+  - test_id: F-FUNC-001
+    category: functional
+    input:
+      scenario: "Given an OpenAPI doc with GET /customers/{id}, analyze it."
+    expected_behavior:
+      - Extracts the method, path, path parameter, and auth header.
+      - Records each fact with its source and provenance.
+    result: NOT_RUN
+    requirement_ref: FACTORY-ANALYZE
+  - test_id: F-FUNC-002
+    category: functional
+    input:
+      scenario: "A mandatory request field is undocumented."
+    expected_behavior:
+      - Asks a clarifying question and does not guess the field.
+    result: NOT_RUN
+    requirement_ref: FACTORY-CLARIFY
+  - test_id: F-FUNC-003
+    category: functional
+    input:
+      scenario: "Generate a skill from a complete, simple API."
+    expected_behavior:
+      - The generated skill passes scripts/validate_skill.py.
+      - Frontmatter is core-only and the name matches the directory.
+    result: NOT_RUN
+    requirement_ref: FACTORY-CONFORMANCE
+  - test_id: F-FUNC-004
+    category: functional
+    input:
+      scenario: "Route artifacts with a two-repo topology."
+    expected_behavior:
+      - Places skill, evals, and registration in their configured destinations.
+      - Records a manifest and preserves unrelated files.
+    result: NOT_RUN
+    requirement_ref: FACTORY-ROUTE
+  - test_id: F-FUNC-005
+    category: functional
+    input:
+      scenario: "Produce the traceability report for a generated skill."
+    expected_behavior:
+      - Every mandatory requirement links to a source and an eval.
+    result: NOT_RUN
+    requirement_ref: FACTORY-TRACEABILITY
+  - test_id: F-FUNC-006
+    category: functional
+    input:
+      scenario: "Given a routing-policy doc, a repository-map doc, and routing examples, derive placement."
+    expected_behavior:
+      - Identifies each document's role.
+      - Routes every artifact type to a destination, each with a cited source (routing provenance).
+      - Produces a routing plan and passes scripts/check_routing.py.
+    result: NOT_RUN
+    requirement_ref: FACTORY-ROUTING-DERIVATION

@@ -1,0 +1,42 @@
+# Example topology (conforms to schemas/repository-topology.schema.yaml). NOT mandated paths.
+# The factory knows artifact TYPES; this file knows LOCATIONS. Edit to match your repos.
+# Disable any plane you do not use (enabled: false); a single-repo setup is valid.
+version: 1
+repositories:
+  project:
+    enabled: true
+    path: "../customer-platform"
+    destinations:
+      skills: ".claude/skills"
+      evaluations: "evaluations"
+      tests: "tests/skill-behavior"
+  federation:
+    enabled: true
+    path: "../ai-quality-governance"
+    approval_required: true
+    destinations:
+      standards: "standards"
+      evaluations: "evaluations"
+      test_suites: "test-suites"
+  mcp:
+    enabled: true
+    path: "../mcp-platform"
+    destinations:
+      documentation: "documentation"
+      schemas: "schemas"
+  registry:
+    enabled: true
+    path: "../skill-registry"
+    destinations:
+      registrations: "registrations"
+routing:
+  generated_skill: "project.skills"
+  project_evaluation: "project.evaluations"
+  regression_test: "project.tests"
+  adversarial_eval: "project.evaluations"
+  federated_eval: "federation.evaluations"
+  proposed_shared_standard: "federation.standards"
+  mcp_reference: "mcp.documentation"
+  skill_registration: "registry.registrations"
+  evaluation_report: "project.evaluations"
+  traceability_report: "project.evaluations"

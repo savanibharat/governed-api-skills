@@ -1,0 +1,26 @@
+# Active workspace profile. Governs which inputs may be used and which destinations written.
+# Switch profile (personal <-> company) by pointing at a different topology and policy set.
+# Personal and company repositories are never implicitly mixed.
+profile: personal
+repository_topology: ./repository-topology.yaml
+policies:
+  allow_local_file_generation: true
+  allow_federation_writes: false          # a company profile may enable this (still approval-gated)
+  require_approval_for_shared_artifacts: true
+  forbid_real_proprietary_source: true    # the factory works from specs and examples only
+  never_mix_personal_and_company: true
+  allowed_input_sources:                  # confidentiality: where inputs may come from
+    - api_specs
+    - request_response_examples
+    - mcp_tool_contracts
+    - company_rule_docs
+
+# Reference only - a company profile lives in its own file under a company checkout:
+# profile: company
+# repository_topology: ./company-repositories.yaml
+# policies:
+#   allow_local_file_generation: true
+#   allow_federation_writes: true
+#   require_approval_for_shared_artifacts: true
+#   forbid_real_proprietary_source: true
+#   never_mix_personal_and_company: true

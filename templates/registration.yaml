@@ -1,0 +1,21 @@
+# TEMPLATE - skill registry entry (conforms to schemas/skill-registration.schema.yaml).
+# Points to the authoritative skill; never duplicates its contents.
+id: "{{skill_name}}"
+name: "{{Human Readable Name}}"
+version: "1.0.0"
+type: api-skill
+status: draft            # draft | approved | deprecated
+owner:
+  team: "{{team}}"
+source:
+  repository: "{{project_repo}}"
+  path: ".claude/skills/{{skill_name}}"
+evaluations:
+  project_suite: "{{skill_name}}-evals"
+  federation_suite: "mandatory-api-skill"
+uber_standard_version: "1.0.0"
+compatibility:
+  agent_skills_standard: true
+last_evaluated:
+  date: "{{iso_date}}"
+  result: not_run        # passed | failed | inconclusive | not_run
