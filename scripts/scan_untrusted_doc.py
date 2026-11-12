@@ -3,8 +3,13 @@
 scan_untrusted_doc.py - build-time injection-scan ASSIST (governed-api-skills).
 
 Flags instruction-like content in an ingested document so it can be treated as DATA, not
-instructions. This is an ASSIST, not a gate: it surfaces findings for review and never blocks
-or acts on them. Feed already-extracted text (.md / .txt); extract PDF text first.
+instructions.
+
+ADVISORY TRIPWIRE, NOT A DEFENSE. It normalizes Unicode (NFKC) and matches known patterns, but
+rephrasing, novel wording, or other languages can evade it. The real defense is the treat-as-data
+discipline (uber-standard/injection-defense.md) and the deterministic renderer - not this scanner.
+It surfaces findings for review and never blocks or acts on them. Feed already-extracted text
+(.md / .txt); extract PDF text first.
 
 Usage:
     python scan_untrusted_doc.py FILE [--json]
@@ -15,6 +20,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import unicodedata
 from pathlib import Path
 
 PATTERNS = [
@@ -33,7 +39,8 @@ COMPILED = [(name, re.compile(p, re.I)) for name, p in PATTERNS]
 
 def scan(text: str):
     findings = []
-    for i, line in enumerate(text.splitlines(), 1):
+    for i, raw in enumerate(text.splitlines(), 1):
+        line = unicodedata.normalize("NFKC", raw)  # fold homoglyph/compatibility forms first
         for name, rx in COMPILED:
             if rx.search(line):
                 snippet = line.strip()

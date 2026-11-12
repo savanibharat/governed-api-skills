@@ -1,0 +1,5 @@
+{
+  "error": "validation_error",
+  "message": "vendor_id is required",
+  "field": "vendor_id"
+}

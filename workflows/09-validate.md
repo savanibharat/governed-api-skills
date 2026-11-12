@@ -6,6 +6,11 @@ frontmatter; name rules (kebab-case, 64 max, no reserved words, matches the dire
 description rules (non-empty, no angle brackets, 1024 max); compatibility 500 max. Record the
 result as the first line of evidence.
 
+Then run the other mechanical gates, all of which must pass: `scripts/validate_artifacts.py
+<skill_dir>` (schemas), `scripts/check_traceability.py <skill_dir>/traceability.yaml
+<skill_dir>/evals/eval-suite.yaml`, `scripts/check_routing.py configuration`, and
+`scripts/run_evals.py` (records the deterministic evidence to `evaluations/results/`).
+
 Also confirm against `configuration/evaluation-policy.yaml`: the mandatory suites are present,
 the functional threshold is met, there is no unresolved critical adversarial failure, and
 traceability is complete.

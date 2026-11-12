@@ -18,4 +18,10 @@ Presentation (optional): if on, generate a declarative mapping from
 `templates/presentation-mapping.yaml` (`references/response-presentation.md`). Only documented
 fields.
 
+## Verify (script-enforced)
+Run on the generated skill; all must pass before continuing:
+`scripts/validate_skill.py <skill>`, `scripts/validate_artifacts.py <skill>` (evals/mapping/
+registration match the schemas), and `scripts/check_traceability.py <skill>/traceability.yaml
+<skill>/evals/eval-suite.yaml` (every implemented requirement has a real source and a real eval).
+
 Next: `06-generate-evals.md`.

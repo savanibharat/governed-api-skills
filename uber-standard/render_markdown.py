@@ -17,6 +17,7 @@ import argparse
 import json
 import re
 import sys
+import unicodedata
 from pathlib import Path
 
 MAX_NAME = 64
@@ -70,6 +71,7 @@ def sanitize(value, is_name=False, redact=False) -> str:
         s = json.dumps(value, ensure_ascii=False, sort_keys=True)
     else:
         s = str(value)
+    s = unicodedata.normalize("NFKC", s)  # fold homoglyph/compatibility forms before sanitizing
     s = CONTROL_RE.sub("", s)
     limit = MAX_NAME if is_name else MAX_VALUE
     if len(s) > limit:

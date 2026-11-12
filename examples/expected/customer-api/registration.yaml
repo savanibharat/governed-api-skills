@@ -1,0 +1,20 @@
+# Registry entry for customer-api (conforms to schemas/skill-registration.schema.yaml).
+id: customer-api
+name: "Customer API"
+version: "1.0.0"
+type: api-skill
+status: draft
+owner:
+  team: "customer-platform"
+source:
+  repository: "skills-repo"
+  path: ".claude/skills/customer-api"
+evaluations:
+  project_suite: "customer-api-evals"
+  federation_suite: "mandatory-api-skill"
+uber_standard_version: "1.0.0"
+compatibility:
+  agent_skills_standard: true
+last_evaluated:
+  date: "2026-11-11"
+  result: not_run

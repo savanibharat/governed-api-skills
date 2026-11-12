@@ -1,0 +1,24 @@
+# Schema for a structured traceability file (checked by scripts/check_traceability.py).
+"$schema": "https://json-schema.org/draft/2020-12/schema"
+title: Traceability
+description: Structured requirement provenance for a generated skill.
+type: object
+required: [skill, requirements]
+additionalProperties: false
+properties:
+  skill: { type: string }
+  requirements:
+    type: array
+    items:
+      type: object
+      required: [id, statement, source, provenance]
+      additionalProperties: false
+      properties:
+        id: { type: string }
+        statement: { type: string }
+        source: { type: string }
+        provenance: { enum: [documented, example-supported, inferred, user-approved-assumption, unknown] }
+        instruction: { type: [string, "null"] }
+        eval: { type: [string, "null"] }
+        result: { enum: [PASS, FAIL, INCONCLUSIVE, NOT_RUN] }
+        open_question: { type: string }

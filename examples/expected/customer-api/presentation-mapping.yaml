@@ -1,0 +1,12 @@
+# Presentation mapping for customer-api (conforms to schemas/presentation-mapping.schema.yaml).
+# Email is intentionally OMITTED: it is PII (best-practices.md, REQ-PII). Only documented,
+# non-PII fields are shown.
+title: "Customer"
+sections:
+  - heading: "Customer"
+    kind: fields
+    source: ""
+    fields:
+      - { label: "ID", path: "id" }
+      - { label: "Name", path: "name", name: true }
+      - { label: "Created", path: "created_at" }

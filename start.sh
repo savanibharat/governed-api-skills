@@ -1,17 +1,26 @@
 #!/usr/bin/env bash
-# One-step setup for governed-api-skills: installs the only two dependencies and verifies the
-# package. This is the whole install - no other steps, no slash commands.
+# One-step setup for governed-api-skills. Creates an isolated .venv (does NOT touch system
+# Python), installs the only dependencies, and verifies the package. This is the whole install.
 set -e
 cd "$(dirname "$0")"
 
-echo "==> Installing dependencies (pyyaml, jsonschema)"
-python3 -m pip install --quiet --break-system-packages pyyaml jsonschema 2>/dev/null \
-  || python3 -m pip install --quiet pyyaml jsonschema
+PY="${PYTHON:-python3}"
+echo "==> Creating virtual environment (.venv)"
+"$PY" -m venv .venv
+VENV_PY=".venv/bin/python"
+[ -x "$VENV_PY" ] || VENV_PY=".venv/Scripts/python.exe"   # Windows fallback
+
+echo "==> Installing dependencies into .venv (pyyaml, jsonschema, pytest)"
+"$VENV_PY" -m pip install --quiet --upgrade pip
+"$VENV_PY" -m pip install --quiet pyyaml jsonschema pytest
 
 echo "==> Verifying the package"
-python3 scripts/validate_skill.py .
-python3 scripts/check_routing.py
+"$VENV_PY" scripts/validate_skill.py .
+"$VENV_PY" scripts/check_routing.py configuration
 
 echo ""
-echo "Ready. Next: open RUN.md, or just tell Claude:"
-echo "  Run governed-api-skills. Repositories: <skills> <mcp> <governance>. Inputs in <folder>."
+echo "Ready. Activate the environment with:"
+echo "    source .venv/bin/activate"
+echo "Then run the pipeline by telling Claude, or check your inputs with:"
+echo "    python scripts/preflight.py <inputs-folder>"
+echo "Run the self-tests any time with:  python -m pytest -q"

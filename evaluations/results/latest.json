@@ -1,0 +1,182 @@
+{
+  "deterministic": [
+    {
+      "check": "package-conformance",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "example-conformance",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "example-artifacts-schema",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "example-traceability",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "routing-completeness",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "renderer-omits-pii",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "renderer-redacts-secret",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "scanner-flags-injection",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "scanner-passes-clean",
+      "result": "PASS",
+      "detail": ""
+    }
+  ],
+  "agent_judged": [
+    {
+      "suite": "factory-adversarial.yaml",
+      "test_id": "F-ADV-001",
+      "category": "adversarial",
+      "result": "REQUIRES_AGENT"
+    },
+    {
+      "suite": "factory-adversarial.yaml",
+      "test_id": "F-ADV-002",
+      "category": "adversarial",
+      "result": "REQUIRES_AGENT"
+    },
+    {
+      "suite": "factory-adversarial.yaml",
+      "test_id": "F-ADV-003",
+      "category": "adversarial",
+      "result": "REQUIRES_AGENT"
+    },
+    {
+      "suite": "factory-adversarial.yaml",
+      "test_id": "F-ADV-004",
+      "category": "adversarial",
+      "result": "REQUIRES_AGENT"
+    },
+    {
+      "suite": "factory-functional.yaml",
+      "test_id": "F-FUNC-001",
+      "category": "functional",
+      "result": "REQUIRES_AGENT"
+    },
+    {
+      "suite": "factory-functional.yaml",
+      "test_id": "F-FUNC-002",
+      "category": "functional",
+      "result": "REQUIRES_AGENT"
+    },
+    {
+      "suite": "factory-functional.yaml",
+      "test_id": "F-FUNC-003",
+      "category": "functional",
+      "result": "REQUIRES_AGENT"
+    },
+    {
+      "suite": "factory-functional.yaml",
+      "test_id": "F-FUNC-004",
+      "category": "functional",
+      "result": "REQUIRES_AGENT"
+    },
+    {
+      "suite": "factory-functional.yaml",
+      "test_id": "F-FUNC-005",
+      "category": "functional",
+      "result": "REQUIRES_AGENT"
+    },
+    {
+      "suite": "factory-functional.yaml",
+      "test_id": "F-FUNC-006",
+      "category": "functional",
+      "result": "REQUIRES_AGENT"
+    },
+    {
+      "suite": "factory-negative.yaml",
+      "test_id": "F-NEG-001",
+      "category": "negative",
+      "result": "REQUIRES_AGENT"
+    },
+    {
+      "suite": "factory-negative.yaml",
+      "test_id": "F-NEG-002",
+      "category": "negative",
+      "result": "REQUIRES_AGENT"
+    },
+    {
+      "suite": "factory-negative.yaml",
+      "test_id": "F-NEG-003",
+      "category": "negative",
+      "result": "REQUIRES_AGENT"
+    },
+    {
+      "suite": "factory-negative.yaml",
+      "test_id": "F-NEG-004",
+      "category": "negative",
+      "result": "REQUIRES_AGENT"
+    },
+    {
+      "suite": "factory-negative.yaml",
+      "test_id": "F-NEG-005",
+      "category": "negative",
+      "result": "REQUIRES_AGENT"
+    },
+    {
+      "suite": "factory-negative.yaml",
+      "test_id": "F-NEG-006",
+      "category": "negative",
+      "result": "REQUIRES_AGENT"
+    },
+    {
+      "suite": "factory-negative.yaml",
+      "test_id": "F-NEG-007",
+      "category": "negative",
+      "result": "REQUIRES_AGENT"
+    },
+    {
+      "suite": "eval-suite.yaml",
+      "test_id": "FUNC-001",
+      "category": "functional",
+      "result": "REQUIRES_AGENT"
+    },
+    {
+      "suite": "eval-suite.yaml",
+      "test_id": "NEG-001",
+      "category": "negative",
+      "result": "REQUIRES_AGENT"
+    },
+    {
+      "suite": "eval-suite.yaml",
+      "test_id": "ADV-001",
+      "category": "adversarial",
+      "result": "REQUIRES_AGENT"
+    },
+    {
+      "suite": "eval-suite.yaml",
+      "test_id": "REG-001",
+      "category": "regression",
+      "result": "REQUIRES_AGENT"
+    }
+  ],
+  "summary": {
+    "deterministic_passed": 9,
+    "deterministic_total": 9,
+    "agent_judged": 21
+  }
+}

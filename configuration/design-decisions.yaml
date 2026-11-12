@@ -127,6 +127,43 @@ decisions:
     status: active
     revisit_when: The artifact type set or repo model changes.
 
+  - id: DD-012
+    category: quality
+    component: enforcement
+    description: >
+      Governance guarantees are mechanically enforced wherever possible (conformance, artifact
+      schemas, routing completeness, traceability completeness, deterministic eval checks) via
+      scripts with unit tests and CI. Guarantees that require judgement (never-invent semantics,
+      behavioral/adversarial evals) are labelled [agent] in RUN.md and recorded as REQUIRES_AGENT
+      - never silently passed.
+    reason: Close the gap between declared and enforced guarantees; be honest about the rest.
+    impact: Deterministic evidence is produced by scripts/run_evals.py; behavioral evals still need an agent harness.
+    configurable: false
+    status: active
+    revisit_when: An agent eval harness is bundled.
+
+  - id: DD-013
+    category: adoption
+    component: setup
+    description: start.sh installs into an isolated .venv rather than system Python.
+    reason: Avoid --break-system-packages and side effects on the user's machine.
+    impact: Dependencies live in .venv; activate it or use .venv/bin/python.
+    configurable: false
+    status: active
+    revisit_when: A different packaging mechanism is adopted.
+
+  - id: DD-014
+    category: security
+    component: injection-scanner
+    description: >
+      scan_untrusted_doc.py is an ADVISORY tripwire (regex + NFKC normalization), not a defense.
+      The real defense is the treat-as-data discipline and the deterministic renderer.
+    reason: Regex scanning is evadable by rephrasing, novel wording, or other languages.
+    impact: The scanner surfaces findings for review; it never blocks or is relied on as a control.
+    configurable: false
+    status: active
+    revisit_when: A stronger detector is added (still not a sole control).
+
   - id: DD-011
     category: adoption
     component: entrypoint

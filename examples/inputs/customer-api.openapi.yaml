@@ -1,0 +1,55 @@
+openapi: 3.0.0
+info:
+  title: Customer API
+  version: "1.0"
+servers:
+  - url: https://api.example.com
+paths:
+  /customers/{id}:
+    get:
+      summary: Get a customer by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: The customer
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Customer" }
+        "401": { description: Missing or invalid bearer token }
+        "404": { description: No such customer }
+  /customers:
+    post:
+      summary: Create a customer
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, vendor_id]
+              properties:
+                name: { type: string }
+                vendor_id: { type: string }
+      responses:
+        "201": { description: Created }
+        "400": { description: Validation error (e.g. missing vendor_id) }
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer }
+  schemas:
+    Customer:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        email: { type: string }
+        created_at: { type: string }
+# Note: 403 is intentionally NOT documented - the factory must treat it as unknown, not invent it.
