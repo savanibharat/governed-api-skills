@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 """
-check_drift.py - detect generated skills whose baked uber guards are stale, unstamped, or TAMPERED
-(governed-api-skills).
+check_drift.py - integrity gate for generated skills (governed-api-skills).
 
-A generated skill is one that carries baked guards (references/injection-defense.md). For each:
+A folder is treated as a generated skill if it carries ANY marker: baked guards, a version stamp,
+traceability.yaml, registration.yaml, or an evals/ suite. This closes the escape hatch where
+deleting the guard file AND the stamp made the folder look like "not a skill" and pass every gate.
+
+For each generated skill:
 - it MUST carry metadata.uber_standard_version (else: unstamped);
+- it MUST carry every baked guard file (else: missing guard);
 - the stamp MUST equal the current uber-standard/VERSION (else: stale);
-- when the stamp is current, each baked guard FILE must hash-match the current uber-standard file
-  (else: modified / missing). This catches hand-edits that a version-only check would miss.
+- when the stamp is current, each baked guard FILE must hash-match uber-standard (else: modified).
 
 Importable: check(skills_root) -> list of (name, issue). Exit 0 = clean; exit 1 = issues.
 Usage: python check_drift.py [skills_root]   # defaults to the bundled examples/expected
@@ -46,29 +49,33 @@ def _version_of(skill_md: Path):
     return (fm.get("metadata") or {}).get("uber_standard_version")
 
 
+def _is_generated_skill(d: Path, have) -> bool:
+    return (have is not None
+            or (d / "references" / "injection-defense.md").exists()
+            or (d / "traceability.yaml").exists()
+            or (d / "registration.yaml").exists()
+            or (d / "evals").is_dir())
+
+
 def check(skills_root) -> list:
     want = current_version()
     issues = []
     for md in sorted(Path(skills_root).rglob("SKILL.md")):
         d = md.parent
-        has_guards = (d / "references" / "injection-defense.md").exists()
         have = _version_of(md)
-        if not has_guards and not have:
-            continue  # not a generated skill (e.g. the factory itself)
+        if not _is_generated_skill(d, have):
+            continue  # genuinely not a generated skill (e.g. the factory itself)
         name = d.name
-        if has_guards and not have:
+        if not have:
             issues.append((name, "missing uber_standard_version stamp"))
-            continue
-        if have != want:
+        elif have != want:
             issues.append((name, "stale: baked %s, current %s (regenerate)" % (have, want)))
-            continue
-        # stamp is current: the baked guard files must actually match the current uber standard
         for baked_rel, src_name in GUARD_FILES.items():
             baked = d / baked_rel
             src = PKG / "uber-standard" / src_name
             if not baked.exists():
                 issues.append((name, "baked guard missing: %s" % baked_rel))
-            elif _sha(baked) != _sha(src):
+            elif have == want and _sha(baked) != _sha(src):
                 issues.append((name, "baked guard modified (hash mismatch): %s" % baked_rel))
     return issues
 
@@ -81,7 +88,7 @@ def main() -> int:
         for name, why in issues:
             print("  - %s: %s" % (name, why))
         return 1
-    print("DRIFT: none - scanned skills match uber-standard VERSION %s (stamp + file hashes)" % current_version())
+    print("DRIFT: none - scanned skills carry guards + stamp and match uber-standard VERSION %s" % current_version())
     return 0
 
 

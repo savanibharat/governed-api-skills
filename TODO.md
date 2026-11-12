@@ -27,6 +27,12 @@
 - Domain = REST APIs. The engine is domain-pluggable (`references/api-analysis.md`), but only
   REST ships in v1.
 
+## Done in v1.4 (review-4 fixes)
+- Closed the drift escape hatch: a folder with any generated-skill marker (guards, stamp, traceability.yaml, registration.yaml, evals/) that is missing a guard or stamp now FAILS (can't be hidden by deleting the guard + stamp).
+- Instruction-provenance now checks against the SOURCE OpenAPI spec (case-insensitive, URL-aware, path-param normalized), closing the "document the bogus op in references" evasion. Prose-only instructions remain a semantic (agent) gap.
+- Removed the unused `references/UBER_VERSION` decoy.
+- Added a visible `verify.sh` (runs tests + all gates + self-eval). CI lives at `.github/workflows/ci.yml` - a hidden dot-folder; use `ls -a` or enable "show hidden files".
+
 ## Done in v1.3 (review-3 fixes)
 - Drift now hash-checks baked guard FILES (catches hand-edits) and flags unstamped skills, not just the version stamp.
 - `check_traceability.py` requires the eval suite (a missing suite is now an error, not a silent pass).

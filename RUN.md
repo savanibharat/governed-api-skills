@@ -53,8 +53,10 @@ VERIFY **[script]** `scripts/validate_skill.py <skill>` (conformance),
 `scripts/validate_artifacts.py <skill>` (evals/mapping/registration match the schemas),
 `scripts/check_traceability.py <skill>/traceability.yaml <skill>/evals/eval-suite.yaml` (every
 implemented requirement has a real source and an eval that exists), and
-`scripts/check_instruction_provenance.py <skill>` (no operation in the skill body is undocumented).
-Plus **[agent]**: the instruction wording genuinely reflects the requirement.
+`scripts/check_instruction_provenance.py <skill> <openapi.yaml>` (every operation the skill
+instructs is defined in the SOURCE OpenAPI spec, not just in the generator's references).
+Plus **[agent]**: the instruction wording genuinely reflects the requirement (prose-only
+instructions with no METHOD/path are a semantic gap the agent reviewer must cover).
 
 **6. Generate evals** - `workflows/06-generate-evals.md`
 VERIFY **[script]** `scripts/validate_artifacts.py` (eval schema) + **[agent]**: all four
@@ -83,8 +85,12 @@ hold-only). Plus **[agent]**: the routing plan (`templates/routing-plan.md`) sho
 every placement; you confirm; nothing unrelated is overwritten; federation writes wait for approval.
 
 ## Run all the mechanical gates at once
-    python -m pytest -q            # the self-tests
-    python scripts/run_evals.py    # deterministic evidence -> evaluations/results/
+    bash verify.sh                 # tests + all gates + self-eval (this mirrors CI)
+    python -m pytest -q            # just the self-tests
+    python scripts/run_evals.py    # just the deterministic evidence -> evaluations/results/
+
+CI runs the same steps on every push from `.github/workflows/ci.yml` (a hidden dot-folder; use
+`ls -a` or enable "show hidden files" to see it).
 
 ## Done
 You have the generated skill, its evals and evidence, a traceability report, and a routing plan -

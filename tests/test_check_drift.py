@@ -35,3 +35,15 @@ def test_detects_tampered_guard(tmp_path):
     (d / "references/injection-defense.md").write_text("JUNK - hand edited\n")
     issues = check_drift.check(tmp_path)
     assert any("hash mismatch" in w for _, w in issues)
+
+
+def test_strip_guard_and_stamp_still_caught(tmp_path):
+    import re
+    d = tmp_path / "customer-api"
+    shutil.copytree(PKG / "examples/expected/customer-api", d)
+    (d / "references/injection-defense.md").unlink()              # remove a guard
+    sk = d / "SKILL.md"
+    sk.write_text(re.sub(r"\n  uber_standard_version:.*", "", sk.read_text()))  # remove the stamp
+    issues = check_drift.check(tmp_path)  # traceability.yaml/registration.yaml still mark it a skill
+    assert any("missing uber_standard_version" in w for _, w in issues)
+    assert any("baked guard missing" in w for _, w in issues)

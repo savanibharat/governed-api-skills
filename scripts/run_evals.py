@@ -55,7 +55,8 @@ def deterministic_checks() -> list:
     rec("eval-coverage", check_eval_coverage.check(ex / "evals" / "eval-suite.yaml"))
     rec("drift", ["%s: %s" % t for t in check_drift.check(PKG / "examples" / "expected")])
     rec("output-scan", scan_output.check(ex, PKG / "examples" / "inputs"))
-    rec("instruction-provenance", check_instruction_provenance.check(ex))
+    rec("instruction-provenance", check_instruction_provenance.check(
+        ex, PKG / "examples" / "inputs" / "customer-api.openapi.yaml"))
 
     resp = json.loads((PKG / "examples" / "inputs" / "examples" / "get-customer-200.json").read_text())
     mapping = render_markdown.load_mapping(ex / "presentation-mapping.yaml")

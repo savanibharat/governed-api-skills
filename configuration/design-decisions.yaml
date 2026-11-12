@@ -206,6 +206,22 @@ decisions:
     status: active
     revisit_when: A semantic instruction-to-requirement matcher is added.
 
+  - id: DD-018
+    category: security
+    component: integrity-gates
+    description: >
+      Drift treats a folder as a generated skill if it has ANY marker (guards, stamp,
+      traceability.yaml, registration.yaml, evals/) and FAILS on a missing guard or stamp, so a
+      check cannot be dodged by deleting the thing it checks. Instruction-provenance compares the
+      skill's instructed operations against the SOURCE OpenAPI spec (case-insensitive, URL-aware,
+      path-param normalized), not the generator-written references. The unused
+      references/UBER_VERSION decoy was removed; a visible verify.sh mirrors CI.
+    reason: Checks were evadable by removing the checked artifact or by self-documenting a bogus op.
+    impact: Stripped guards/stamp and undocumented operations now fail a gate; prose-only instructions remain a semantic (agent) gap.
+    configurable: false
+    status: active
+    revisit_when: A semantic instruction matcher or full agent eval harness lands.
+
   - id: DD-011
     category: adoption
     component: entrypoint
