@@ -46,6 +46,11 @@
       "detail": ""
     },
     {
+      "check": "instruction-provenance",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
       "check": "renderer-omits-pii",
       "result": "PASS",
       "detail": ""
@@ -195,8 +200,8 @@
     }
   ],
   "summary": {
-    "deterministic_passed": 13,
-    "deterministic_total": 13,
+    "deterministic_passed": 14,
+    "deterministic_total": 14,
     "agent_judged": 21
   }
 }

@@ -11,6 +11,10 @@ def test_example_ok():
     assert check_traceability.check(E / "traceability.yaml", E / "evals/eval-suite.yaml") == []
 
 
+def test_missing_suite_is_error():
+    assert any("eval suite not" in p for p in check_traceability.check(E / "traceability.yaml"))
+
+
 def test_unknown_with_instruction(tmp_path):
     d = yaml.safe_load((E / "traceability.yaml").read_text())
     d["requirements"][-1]["instruction"] = "x"

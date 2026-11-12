@@ -52,8 +52,9 @@ VERIFY **[agent]**: no open unknown left silent - each is asked or recorded.
 VERIFY **[script]** `scripts/validate_skill.py <skill>` (conformance),
 `scripts/validate_artifacts.py <skill>` (evals/mapping/registration match the schemas),
 `scripts/check_traceability.py <skill>/traceability.yaml <skill>/evals/eval-suite.yaml` (every
-implemented requirement has a real source and an eval that exists). Plus **[agent]**: the
-instruction wording genuinely reflects the requirement.
+implemented requirement has a real source and an eval that exists), and
+`scripts/check_instruction_provenance.py <skill>` (no operation in the skill body is undocumented).
+Plus **[agent]**: the instruction wording genuinely reflects the requirement.
 
 **6. Generate evals** - `workflows/06-generate-evals.md`
 VERIFY **[script]** `scripts/validate_artifacts.py` (eval schema) + **[agent]**: all four
@@ -71,8 +72,9 @@ re-run; history kept.
 
 **9. Validate** - `workflows/09-validate.md`
 VERIFY **[script]**: `validate_skill.py`, `validate_artifacts.py`, `check_traceability.py`,
-`check_routing.py`, `check_profile.py`, `check_eval_coverage.py`, `check_drift.py`, and
-`run_evals.py` all pass; plus the evaluation policy (`configuration/evaluation-policy.yaml`).
+`check_routing.py`, `check_profile.py`, `check_eval_coverage.py`, `check_drift.py`,
+`check_instruction_provenance.py`, and `run_evals.py` all pass; plus the evaluation policy
+(`configuration/evaluation-policy.yaml`).
 
 **10. Route** - `workflows/10-route.md`
 VERIFY **[script]** `scripts/check_routing.py configuration` (every artifact type routed to an

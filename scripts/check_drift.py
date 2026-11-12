@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 """
-check_drift.py - list generated skills whose baked uber_standard_version is behind the current
-uber-standard/VERSION (governed-api-skills). Closes the "nobody can tell which skills are stale" gap.
+check_drift.py - detect generated skills whose baked uber guards are stale, unstamped, or TAMPERED
+(governed-api-skills).
 
-Importable: check(skills_root) -> list of (name, have, want). Exit 0 = none stale; exit 1 = stale.
+A generated skill is one that carries baked guards (references/injection-defense.md). For each:
+- it MUST carry metadata.uber_standard_version (else: unstamped);
+- the stamp MUST equal the current uber-standard/VERSION (else: stale);
+- when the stamp is current, each baked guard FILE must hash-match the current uber-standard file
+  (else: modified / missing). This catches hand-edits that a version-only check would miss.
 
-Usage:
-    python check_drift.py [skills_root]   # defaults to the bundled examples/expected
+Importable: check(skills_root) -> list of (name, issue). Exit 0 = clean; exit 1 = issues.
+Usage: python check_drift.py [skills_root]   # defaults to the bundled examples/expected
 """
 from __future__ import annotations
+import hashlib
 import re
 import sys
 from pathlib import Path
@@ -16,10 +21,20 @@ from pathlib import Path
 import yaml
 
 PKG = Path(__file__).resolve().parent.parent
+GUARD_FILES = {   # baked path inside a skill -> source file in uber-standard/
+    "references/injection-defense.md": "injection-defense.md",
+    "references/output-sanitization.md": "output-sanitization.md",
+    "references/naming-validation.md": "naming-validation.md",
+    "scripts/render_markdown.py": "render_markdown.py",
+}
 
 
 def current_version() -> str:
     return (PKG / "uber-standard" / "VERSION").read_text(encoding="utf-8").strip()
+
+
+def _sha(path: Path) -> str:
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
 def _version_of(skill_md: Path):
@@ -33,23 +48,40 @@ def _version_of(skill_md: Path):
 
 def check(skills_root) -> list:
     want = current_version()
-    stale = []
+    issues = []
     for md in sorted(Path(skills_root).rglob("SKILL.md")):
+        d = md.parent
+        has_guards = (d / "references" / "injection-defense.md").exists()
         have = _version_of(md)
-        if have and have != want:
-            stale.append((md.parent.name, have, want))
-    return stale
+        if not has_guards and not have:
+            continue  # not a generated skill (e.g. the factory itself)
+        name = d.name
+        if has_guards and not have:
+            issues.append((name, "missing uber_standard_version stamp"))
+            continue
+        if have != want:
+            issues.append((name, "stale: baked %s, current %s (regenerate)" % (have, want)))
+            continue
+        # stamp is current: the baked guard files must actually match the current uber standard
+        for baked_rel, src_name in GUARD_FILES.items():
+            baked = d / baked_rel
+            src = PKG / "uber-standard" / src_name
+            if not baked.exists():
+                issues.append((name, "baked guard missing: %s" % baked_rel))
+            elif _sha(baked) != _sha(src):
+                issues.append((name, "baked guard modified (hash mismatch): %s" % baked_rel))
+    return issues
 
 
 def main() -> int:
     root = sys.argv[1] if len(sys.argv) > 1 else str(PKG / "examples" / "expected")
-    stale = check(root)
-    if stale:
-        print("DRIFT: %d skill(s) behind uber-standard VERSION %s" % (len(stale), current_version()))
-        for name, have, want in stale:
-            print("  - %s: baked %s, current %s (regenerate)" % (name, have, want))
+    issues = check(root)
+    if issues:
+        print("DRIFT: %d issue(s) vs uber-standard VERSION %s" % (len(issues), current_version()))
+        for name, why in issues:
+            print("  - %s: %s" % (name, why))
         return 1
-    print("DRIFT: none - all scanned skills match uber-standard VERSION %s" % current_version())
+    print("DRIFT: none - scanned skills match uber-standard VERSION %s (stamp + file hashes)" % current_version())
     return 0
 
 

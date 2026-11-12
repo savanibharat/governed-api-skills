@@ -11,6 +11,7 @@
 | eval-coverage | PASS |
 | drift | PASS |
 | output-scan | PASS |
+| instruction-provenance | PASS |
 | renderer-omits-pii | PASS |
 | renderer-redacts-secret | PASS |
 | scanner-flags-injection | PASS |

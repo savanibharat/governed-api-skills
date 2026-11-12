@@ -191,6 +191,21 @@ decisions:
     status: active
     revisit_when: Baseline results justify different thresholds.
 
+  - id: DD-017
+    category: security
+    component: traceability-enforcement
+    description: >
+      Drift verifies baked guard FILE HASHES against uber-standard (not just the version stamp)
+      and flags unstamped skills. Traceability requires the eval suite (a missing suite is an
+      error). check_instruction_provenance.py flags HTTP operations instructed by SKILL.md that
+      are not documented in the skill's references - a tripwire, since traceability alone is
+      self-reported by the generator.
+    reason: Stamp-only drift missed hand-edits; traceability silently skipped eval links and never read the skill body.
+    impact: Hand-edited guards, unstamped skills, missing eval suites, and undocumented operations now fail a gate.
+    configurable: false
+    status: active
+    revisit_when: A semantic instruction-to-requirement matcher is added.
+
   - id: DD-011
     category: adoption
     component: entrypoint

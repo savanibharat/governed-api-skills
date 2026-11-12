@@ -22,6 +22,8 @@ fields.
 Run on the generated skill; all must pass before continuing:
 `scripts/validate_skill.py <skill>`, `scripts/validate_artifacts.py <skill>` (evals/mapping/
 registration match the schemas), and `scripts/check_traceability.py <skill>/traceability.yaml
-<skill>/evals/eval-suite.yaml` (every implemented requirement has a real source and a real eval).
+<skill>/evals/eval-suite.yaml` (every implemented requirement has a real source and a real eval),
+and `scripts/check_instruction_provenance.py <skill>` (every operation the skill instructs is
+documented in its references).
 
 Next: `06-generate-evals.md`.

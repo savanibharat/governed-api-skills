@@ -3,8 +3,11 @@
 check_traceability.py - mechanical traceability gate (governed-api-skills).
 
 Verifies that every IMPLEMENTED requirement has a real source and an eval that actually exists,
-and that an 'unknown' requirement carries NO instruction but DOES record an open_question. This
-is the check RUN.md step 5 claims but nothing enforced before.
+and that an 'unknown' requirement carries NO instruction but DOES record an open_question.
+
+The eval suite is REQUIRED: if it is not provided or not found, that is an error (otherwise the
+eval-link check would be silently skipped). Pair this with check_instruction_provenance.py, which
+checks the skill body itself - traceability alone is self-reported by the generator.
 
 Importable: check(traceability_path, eval_suite_path=None) -> list[str] of problems.
 Exit 0 = ok; exit 1 = problems; exit 2 = usage.
@@ -30,8 +33,10 @@ def check(trace_path, eval_suite_path=None) -> list:
     for e in list(Draft202012Validator(sch).iter_errors(doc))[:5]:
         problems.append("schema: %s" % e.message)
 
-    eval_ids = set()
-    if eval_suite_path and Path(eval_suite_path).exists():
+    if not eval_suite_path or not Path(eval_suite_path).exists():
+        problems.append("eval suite not provided or not found - cannot verify that eval links exist")
+        eval_ids = None
+    else:
         eval_ids = {ev.get("test_id") for ev in (_load(eval_suite_path).get("evals") or [])}
 
     for req in (doc.get("requirements") or []):
@@ -51,14 +56,14 @@ def check(trace_path, eval_suite_path=None) -> list:
             ev = req.get("eval")
             if not ev:
                 problems.append("%s: implemented requirement has no eval" % rid)
-            elif eval_ids and ev not in eval_ids:
+            elif eval_ids is not None and ev not in eval_ids:
                 problems.append("%s: eval '%s' not found in the eval suite" % (rid, ev))
     return problems
 
 
 def main() -> int:
     if len(sys.argv) < 2:
-        print("usage: check_traceability.py <traceability.yaml> [eval-suite.yaml]")
+        print("usage: check_traceability.py <traceability.yaml> <eval-suite.yaml>")
         return 2
     problems = check(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else None)
     if problems:

@@ -27,9 +27,14 @@
 - Domain = REST APIs. The engine is domain-pluggable (`references/api-analysis.md`), but only
   REST ships in v1.
 
+## Done in v1.3 (review-3 fixes)
+- Drift now hash-checks baked guard FILES (catches hand-edits) and flags unstamped skills, not just the version stamp.
+- `check_traceability.py` requires the eval suite (a missing suite is now an error, not a silent pass).
+- New `check_instruction_provenance.py`: flags HTTP operations instructed by SKILL.md that aren't documented in the skill's references (a tripwire against untraced/laundered operations).
+
 ## Future work
 - An agent-driven eval harness so behavioral/adversarial evals produce recorded evidence too.
-- A `check_drift.py` that lists skills behind `uber-standard/VERSION`.
+- A semantic instruction-to-requirement matcher (current provenance check is operation-level only).
 - A bundled PDF text extractor.
 - Additional domain modules (GraphQL, gRPC) and a git/PR routing connector.
 - Choose and add a LICENSE for distribution.
