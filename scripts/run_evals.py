@@ -22,6 +22,7 @@ import importlib.util  # noqa: E402
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # import sibling scripts
 import yaml  # noqa: E402
 import validate_skill, check_routing, validate_artifacts, check_traceability, scan_untrusted_doc  # noqa: E402
+import check_profile, check_eval_coverage, check_drift, scan_output  # noqa: E402
 
 PKG = Path(__file__).resolve().parent.parent
 
@@ -50,6 +51,10 @@ def deterministic_checks() -> list:
     rec("example-artifacts-schema", validate_artifacts.check(ex))
     rec("example-traceability", check_traceability.check(ex / "traceability.yaml", ex / "evals" / "eval-suite.yaml"))
     rec("routing-completeness", check_routing.check(PKG / "configuration"))
+    rec("profile-enforced", check_profile.check(PKG / "configuration"))
+    rec("eval-coverage", check_eval_coverage.check(ex / "evals" / "eval-suite.yaml"))
+    rec("drift", ["%s baked %s, current %s" % s for s in check_drift.check(PKG / "examples" / "expected")])
+    rec("output-scan", scan_output.check(ex, PKG / "examples" / "inputs"))
 
     resp = json.loads((PKG / "examples" / "inputs" / "examples" / "get-customer-200.json").read_text())
     mapping = render_markdown.load_mapping(ex / "presentation-mapping.yaml")

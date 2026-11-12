@@ -2,11 +2,12 @@
 """
 validate_skill.py - mechanical conformance gate for generated skills (governed-api-skills).
 
-Mirrors the open Agent Skills standard plus the platform rules. Run on every generated skill
-BEFORE routing it; the result is the first line of the skill's evaluation evidence.
-Exit 0 = valid; exit 1 = invalid (reasons listed); exit 2 = usage error.
+Mirrors the open Agent Skills standard plus the platform rules, and enforces the extra promises:
+core-only frontmatter; name rules; description rules; compatibility <=500; metadata values are
+strings; body under 500 lines. Tolerant of CRLF line endings.
 
 Importable: check(skill_dir) -> list[str] of problems (empty == valid).
+Exit 0 = valid; exit 1 = invalid; exit 2 = usage.
 """
 from __future__ import annotations
 import re
@@ -16,6 +17,7 @@ from pathlib import Path
 ALLOWED = {"name", "description", "license", "allowed-tools", "metadata", "compatibility"}
 RESERVED = ("claude", "anthropic")
 NAME_RE = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
+MAX_BODY_LINES = 500
 
 
 def check(skill_dir) -> list:
@@ -23,9 +25,10 @@ def check(skill_dir) -> list:
     md = skill_dir / "SKILL.md"
     if not md.exists():
         return ["SKILL.md not found in %s" % skill_dir]
-    m = re.match(r"^---\n(.*?)\n---", md.read_text(encoding="utf-8"), re.DOTALL)
+    text = md.read_text(encoding="utf-8").replace("\r\n", "\n").replace("\r", "\n")  # tolerate CRLF
+    m = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
     if not m:
-        return ["no YAML frontmatter"]
+        return ["no YAML frontmatter (SKILL.md must start with --- on the first line)"]
     try:
         import yaml
     except ImportError:
@@ -64,6 +67,20 @@ def check(skill_dir) -> list:
     comp = fm.get("compatibility")
     if comp is not None and (not isinstance(comp, str) or len(comp) > 500):
         problems.append("compatibility must be a string of at most 500 characters")
+
+    meta = fm.get("metadata")
+    if meta is not None:
+        if not isinstance(meta, dict):
+            problems.append("metadata must be a mapping of string to string")
+        else:
+            for k, v in meta.items():
+                if not isinstance(v, str):
+                    problems.append("metadata['%s'] must be a string (got %s) - quote the value" % (k, type(v).__name__))
+
+    body = text[m.end():]
+    body_lines = body.count("\n") + (1 if body and not body.endswith("\n") else 0)
+    if body_lines > MAX_BODY_LINES:
+        problems.append("SKILL.md body is %d lines (limit %d) - move detail into references/" % (body_lines, MAX_BODY_LINES))
     return problems
 
 

@@ -2,13 +2,18 @@
 version: 1
 thresholds:
   functional_pass_rate: 0.90            # DD-006 (configurable)
+coverage:
+  min_negative_tests: 1
+  min_regression_tests: 1
+  require_categories: [functional, negative, adversarial, regression]
+  every_requirement_linked_to_eval: true   # enforced by check_traceability.py
 mandatory_suites:
   - functional
   - negative
   - adversarial
   - regression
 release_policy:
-  block_on_unresolved_critical_adversarial: true
+  block_on_unresolved_adversarial_at_or_above: high   # was critical-only; now blocks on high+
   require_conformance_gate_pass: true   # scripts/validate_skill.py must pass
   require_traceability_complete: true   # every mandatory requirement linked to an eval
 evidence:

@@ -7,6 +7,10 @@
 | example-artifacts-schema | PASS |
 | example-traceability | PASS |
 | routing-completeness | PASS |
+| profile-enforced | PASS |
+| eval-coverage | PASS |
+| drift | PASS |
+| output-scan | PASS |
 | renderer-omits-pii | PASS |
 | renderer-redacts-secret | PASS |
 | scanner-flags-injection | PASS |

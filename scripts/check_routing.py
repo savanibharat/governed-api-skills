@@ -64,7 +64,7 @@ def _gated(cfg_dir):
 
 
 def main() -> int:
-    cfg = sys.argv[1] if len(sys.argv) > 1 else "configuration"
+    cfg = sys.argv[1] if len(sys.argv) > 1 else str(Path(__file__).resolve().parent.parent / "configuration")
     problems = check(cfg)
     n = len(_load(Path(cfg) / "artifact-routing.yaml").get("artifact_types", []))
     if problems:

@@ -43,6 +43,17 @@ def test_render_redacts_secret_in_table():
     assert "sk-x" not in out and "[redacted]" in out and "Acme" in out
 
 
+def test_render_redacts_nested_secret_and_neutralizes_url():
+    import re
+    data = {"api": {"secret": "123", "url": "http://evil.example/x"}, "name": "Acme"}
+    mp = {"title": "T", "sections": [{"kind": "fields", "source": "",
+          "fields": [{"label": "API", "path": "api"}, {"label": "Name", "path": "name"}]}]}
+    out = rm.render(mp, data)
+    assert "123" not in out                    # nested secret redacted
+    assert "[redacted]" in out
+    assert re.search(r"`[^`]*http://evil\.example/x[^`]*`", out)  # url only inside a code span
+
+
 def test_render_is_deterministic():
     mp = {"title": "T", "sections": [{"kind": "fields", "source": "", "fields": [{"label": "A", "path": "a"}]}]}
     d = {"a": "val"}

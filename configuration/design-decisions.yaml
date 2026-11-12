@@ -164,6 +164,33 @@ decisions:
     status: active
     revisit_when: A stronger detector is added (still not a sole control).
 
+  - id: DD-015
+    category: governance
+    component: workspace-profile
+    description: >
+      The workspace profile is enforced by scripts/check_profile.py. Policy is ALLOW-BUT-HOLD:
+      when allow_federation_writes is false, shared/federated artifacts must route to an
+      approval-gated repo (held as proposals, never silently written); a silent-write
+      contradiction fails the gate.
+    reason: The profile was decorative; routing could target federation while the profile forbade it.
+    impact: Shared artifacts are hold-only under a restrictive profile; enforced at validate and route.
+    configurable: false
+    status: active
+    revisit_when: Profile semantics change (e.g. hard-block instead of hold).
+
+  - id: DD-016
+    category: evaluation
+    component: evaluation-policy
+    description: >
+      Coverage is enforced (scripts/check_eval_coverage.py): minimum negative and regression
+      tests and required categories. Adversarial release gating now blocks on unresolved findings
+      at or above 'high', not only 'critical'.
+    reason: A single functional pass-rate bar did not guarantee negative/adversarial/regression coverage.
+    impact: An eval suite missing a category or the minimum counts fails the coverage gate.
+    configurable: true
+    status: active
+    revisit_when: Baseline results justify different thresholds.
+
   - id: DD-011
     category: adoption
     component: entrypoint

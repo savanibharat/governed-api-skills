@@ -8,8 +8,10 @@ result as the first line of evidence.
 
 Then run the other mechanical gates, all of which must pass: `scripts/validate_artifacts.py
 <skill_dir>` (schemas), `scripts/check_traceability.py <skill_dir>/traceability.yaml
-<skill_dir>/evals/eval-suite.yaml`, `scripts/check_routing.py configuration`, and
-`scripts/run_evals.py` (records the deterministic evidence to `evaluations/results/`).
+<skill_dir>/evals/eval-suite.yaml`, `scripts/check_routing.py configuration`, `scripts/check_profile.py configuration` (the workspace
+profile is honored), `scripts/check_eval_coverage.py <skill_dir>/evals/eval-suite.yaml`,
+`scripts/check_drift.py` (baked guard version current), and `scripts/run_evals.py` (records the
+deterministic evidence to `evaluations/results/`).
 
 Also confirm against `configuration/evaluation-policy.yaml`: the mandatory suites are present,
 the functional threshold is met, there is no unresolved critical adversarial failure, and

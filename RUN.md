@@ -71,12 +71,13 @@ re-run; history kept.
 
 **9. Validate** - `workflows/09-validate.md`
 VERIFY **[script]**: `validate_skill.py`, `validate_artifacts.py`, `check_traceability.py`,
-`check_routing.py`, and `run_evals.py` all pass; plus the evaluation policy
-(`configuration/evaluation-policy.yaml`).
+`check_routing.py`, `check_profile.py`, `check_eval_coverage.py`, `check_drift.py`, and
+`run_evals.py` all pass; plus the evaluation policy (`configuration/evaluation-policy.yaml`).
 
 **10. Route** - `workflows/10-route.md`
 VERIFY **[script]** `scripts/check_routing.py configuration` (every artifact type routed to an
-enabled repo). Plus **[agent]**: the routing plan (`templates/routing-plan.md`) shows a source for
+enabled repo) and `scripts/check_profile.py configuration` (profile honored; federated artifacts
+hold-only). Plus **[agent]**: the routing plan (`templates/routing-plan.md`) shows a source for
 every placement; you confirm; nothing unrelated is overwritten; federation writes wait for approval.
 
 ## Run all the mechanical gates at once

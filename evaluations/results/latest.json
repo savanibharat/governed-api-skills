@@ -26,6 +26,26 @@
       "detail": ""
     },
     {
+      "check": "profile-enforced",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "eval-coverage",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "drift",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "output-scan",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
       "check": "renderer-omits-pii",
       "result": "PASS",
       "detail": ""
@@ -175,8 +195,8 @@
     }
   ],
   "summary": {
-    "deterministic_passed": 9,
-    "deterministic_total": 9,
+    "deterministic_passed": 13,
+    "deterministic_total": 13,
     "agent_judged": 21
   }
 }

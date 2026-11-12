@@ -2,15 +2,17 @@
 """
 render_markdown.py - the audited safe JSON to Markdown primitive (UBER-STANDARD).
 
-Deterministically renders an API JSON response to Markdown, driven by a declarative
-presentation mapping. No network, no eval, standard library only. The same input plus
-the same mapping always produces the same output.
+Deterministically renders an API JSON response to Markdown, driven by a declarative presentation
+mapping. No network, no eval, standard library only. Same input + mapping => same output.
+
+Safety properties:
+- Secrets are redacted by key name, INCLUDING keys nested inside object values.
+- URL-like values are wrapped in a code span so Markdown viewers cannot autolink them.
+- Control / zero-width characters are stripped; Unicode is NFKC-normalized before matching.
+- Values are truncated; name-like fields are capped at 64 characters.
 
 Usage:
     python render_markdown.py --mapping MAPPING.(json|yaml) --input RESPONSE.json [--out OUT.md]
-
-The mapping schema is schemas/presentation-mapping.schema.yaml. This script NEVER executes
-mapping-supplied code; a mapping only selects fields and labels. See output-sanitization.md.
 """
 from __future__ import annotations
 import argparse
@@ -25,11 +27,12 @@ MAX_VALUE = 500
 SECRET_RE = re.compile(r"(authorization|api[_-]?key|token|secret|password|set-cookie|bearer)", re.I)
 CONTROL_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f​-‏  ]")
 MD_SPECIAL = re.compile(r"([\\`*_\[\]<>|])")
+URL_RE = re.compile(r"(?:https?|ftp|file|data|javascript|mailto|vbscript)\s*:", re.I)
 
 
 def load_mapping(path: Path) -> dict:
-    text = path.read_text(encoding="utf-8")
-    if path.suffix.lower() in (".yaml", ".yml"):
+    text = Path(path).read_text(encoding="utf-8")
+    if Path(path).suffix.lower() in (".yaml", ".yml"):
         try:
             import yaml
         except ImportError:
@@ -60,29 +63,41 @@ def get_path(obj, dotted):
     return cur
 
 
+def is_secret(key) -> bool:
+    return bool(SECRET_RE.search(key or ""))
+
+
+def _redact_obj(value):
+    """Recursively redact any value whose KEY looks secret - including nested objects/arrays."""
+    if isinstance(value, dict):
+        return {k: ("[redacted]" if is_secret(k) else _redact_obj(v)) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_redact_obj(v) for v in value]
+    return value
+
+
 def sanitize(value, is_name=False, redact=False) -> str:
     if redact:
         return "[redacted]"
     if value is None:
         return ""
-    if isinstance(value, str):
+    if isinstance(value, (dict, list)):
+        s = json.dumps(_redact_obj(value), ensure_ascii=False, sort_keys=True)
+    elif isinstance(value, str):
         s = value
-    elif isinstance(value, (dict, list)):
-        s = json.dumps(value, ensure_ascii=False, sort_keys=True)
     else:
         s = str(value)
-    s = unicodedata.normalize("NFKC", s)  # fold homoglyph/compatibility forms before sanitizing
+    s = unicodedata.normalize("NFKC", s)   # fold homoglyph / compatibility forms
     s = CONTROL_RE.sub("", s)
     limit = MAX_NAME if is_name else MAX_VALUE
     if len(s) > limit:
         s = s[: limit - 1].rstrip() + "…"
+    if URL_RE.search(s):
+        # Wrap in a code span so no Markdown viewer autolinks it; keep table-safe.
+        return "`" + s.replace("`", "'").replace("|", "\\|") + "`"
     s = s.replace("\n", " ")
     s = MD_SPECIAL.sub(r"\\\1", s)
     return s
-
-
-def is_secret(key) -> bool:
-    return bool(SECRET_RE.search(key or ""))
 
 
 def render(mapping: dict, data) -> str:

@@ -9,6 +9,13 @@
 - Isolated venv setup (no `--break-system-packages`).
 - Gates in `RUN.md` labelled `[script]` vs `[agent]`; injection scanner demoted to advisory.
 
+## Done in v1.2 (review-2 fixes)
+- Renderer: redacts secrets nested inside object values; neutralizes URLs (code span) so they can't autolink.
+- Path resolution: `check_routing.py` and `preflight.py` resolve config/repo paths from the package/project, not the cwd.
+- Validator: tolerates CRLF; checks metadata values are strings and the body is under 500 lines; `skill-template.md` reordered so it is a valid exemplar.
+- Preflight: missing enabled repo is a FIX (not a note); parses YAML inputs too.
+- `check_drift.py` (baked guard version), `check_profile.py` (workspace profile enforced, allow-but-hold), `scan_output.py` (verbatim-laundering tripwire), `check_eval_coverage.py` (coverage policy). All wired into `run_evals.py` (13/13 deterministic) and the gates.
+
 ## Known limitations (v1)
 - Input formats: PDF, Markdown, TXT only (DD-004). DOCX/HTML not yet supported, and PDF text
   extraction still relies on the host (no bundled extractor).

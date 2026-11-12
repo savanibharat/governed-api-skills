@@ -1,6 +1,3 @@
-<!-- TEMPLATE for a GENERATED skill's SKILL.md. The factory fills {{placeholders}} and bakes
-     the uber standard in. Generated skills use CORE-ONLY frontmatter and must pass
-     scripts/validate_skill.py before routing. Keep the body under 500 lines. -->
 ---
 name: {{skill_name}}
 description: >-
@@ -13,6 +10,10 @@ metadata:
   provenance: "references/traceability.md"
   presentation: "{{on_or_off}}"
 ---
+
+<!-- TEMPLATE: the SKILL.md must start with --- on the FIRST line (no comment before it), or it
+     fails scripts/validate_skill.py. The factory fills {{placeholders}} and bakes the uber
+     standard in. Generated skills use CORE-ONLY frontmatter; keep the body under 500 lines. -->
 
 # {{Skill Title}}
 
